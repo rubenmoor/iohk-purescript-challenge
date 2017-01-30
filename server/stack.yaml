@@ -1,0 +1,8 @@
+resolver: lts-7.18
+packages:
+- '.'
+extra-deps:
+- purescript-bridge-0.9.0.0
+- servant-purescript-0.6.0.0
+flags: {}
+extra-package-dbs: []

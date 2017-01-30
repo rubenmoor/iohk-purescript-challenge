@@ -1,0 +1,28 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "client of iohk purescript test task",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "virtual-dom": "^2.1.1"
+  },
+    "devDependencies": {
+      "purescript": "^0.9.3"
+    },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rubenmoor/iohk-purescript-challenge.git"
+  },
+  "author": "Ruben Moor",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rubenmoor/iohk-purescript-challenge/issues"
+  },
+  "homepage": "https://github.com/rubenmoor/iohk-purescript-challenge#readme"
+}
