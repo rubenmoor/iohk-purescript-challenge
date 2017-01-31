@@ -1,21 +1,22 @@
 {
-  "name": "client",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "output"
-  ],
-  "dependencies": {
-    "purescript-prelude": "^1.0.0",
-    "purescript-console": "^1.0.0",
-    "purescript-generics": "^1.0.0",
-    "purescript-profunctor-lenses": "1.0.0",
-    "purescript-datetime": "1.0.0",
-    "purescript-affjax": "1.0.0",
-    "purescript-jtable": "1.0.0"
-  },
-  "devDependencies": {
-    "purescript-psci-support": "^1.0.0"
-  }
+    "name": "client",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "output"
+    ],
+    "dependencies": {
+        "purescript-prelude": "^1.0.0",
+        "purescript-console": "^1.0.0",
+        "purescript-generics": "^1.0.0",
+        "purescript-profunctor-lenses": "^1.0.0",
+        "purescript-datetime": "^1.0.0",
+        "purescript-affjax": "^1.0.0",
+        "purescript-halogen": "0.11.0",
+        "purescript-argonaut-generic-codecs": "^3.0.0"
+    },
+    "devDependencies": {
+        "purescript-psci-support": "^1.0.0"
+    }
 }

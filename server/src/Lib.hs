@@ -40,9 +40,9 @@ mkReport = Report . Map.toList
 
 -- api
 
-type Api = Raw
-      :<|> "trackingType" :> Get '[JSON] Tracking
+type Api = "trackingType" :> Get '[JSON] Tracking
       :<|> "reportType"   :> Get '[JSON] (Report Text NominalDiffTime)
+      :<|> Raw
 
 api :: Proxy Api
 api = Proxy
@@ -53,6 +53,6 @@ app = serve api handlers
 -- handlers
 
 handlers :: Server Api
-handlers = serveDirectory "site"
-      :<|> pure (Tracking trackingExample)
+handlers = pure (Tracking trackingExample)
       :<|> pure (mkReport reportExample)
+      :<|> serveDirectory "site"
