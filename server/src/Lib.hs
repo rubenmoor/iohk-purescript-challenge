@@ -34,7 +34,8 @@ newtype Report a b = Report { unReport :: [(a, b)] }
 -- don't know how to go on from there.
 -- This constructor covers up part of the damage.
 -- However, now I have to implement something like `fromReport` in
--- PureScript manually to get the actual Map
+-- PureScript manually to get the actual Map ...
+-- or, like I did, just work with the Array
 mkReport :: Map a b -> Report a b
 mkReport = Report . Map.toList
 

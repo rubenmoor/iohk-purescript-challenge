@@ -6,8 +6,9 @@ import Control.Alt ((<|>))
 import Control.Monad.Aff (Aff)
 import Control.Monad.Eff (Eff)
 import Data.Either (Either (..))
-import Data.Map as Map
-import Data.Traversable (for_)
+import Data.Functor ((<#>))
+import Data.Time.Duration (Seconds (..))
+import Data.Tuple (Tuple (..))
 
 import Halogen as H
 import Halogen.HTML.Events.Indexed as HE
@@ -25,7 +26,7 @@ import Lib (Tracking (..), Report (..))
 type State =
   { loading :: Boolean
   , tracking :: Either String Tracking
-  , report :: Either String Report
+  , report :: Either String (Report String Seconds)
   }
 
 initialState :: State
@@ -42,16 +43,22 @@ data Query a
 
 type AppEffects eff = H.HalogenEffects (ajax :: AJAX | eff)
 
-showTracking (Tracking cs) =
-  HH.table_ $
-    [ for_ cs $ \ps ->
-        HH.tr $
-          [ for_ ps $ \(Tuple name duration) ->
-              HH.text (name <> ": " <> show duration)
-          ]
-    ]
+showTracking :: forall a b. Tracking -> HH.HTML a b
+showTracking (Tracking t) =
+  HH.table
+    [ HP.class_ $ HH.className "table table-bordered" ] $
+      t.unTracking <#> \ps ->
+        HH.tr_ $ ps <#> \(Tuple name duration) ->
+          HH.td_ [ HH.text (name <> ": " <> showSeconds duration) ]
 
-showReport report = HH.table_ []
+showReport :: forall a b. Report String Seconds -> HH.HTML a b
+showReport (Report r) = HH.ul
+    [ HP.class_ $ HH.className "list-inline" ] $
+      r.unReport <#> \(Tuple name duration) ->
+        HH.li_ [ HH.text (name <> ": " <> showSeconds duration)]
+
+showSeconds :: Seconds -> String
+showSeconds (Seconds s) = show s <> "s"
 
 ui :: forall eff. H.Component State Query (Aff (AppEffects eff))
 ui = H.component { render , eval }
@@ -61,17 +68,16 @@ ui = H.component { render , eval }
   render st =
     HH.div_ $
       [ HH.p_
-          [ HH.text (if st.loading then "Working ..." else "&nbsp;") ]
+          [ HH.text (if st.loading then "Working ..." else " ") ]
       , HH.div_
           [ HH.button
             [ HP.disabled st.loading
             , HE.onClick (HE.input_ RequestTracking)
             ]
             [ HH.text "Get tracking type" ]
-          , HH.pre_
-            case st.tracking of
+          , case st.tracking of
               Left err -> HH.text err
-              Right ttype -> [ HH.code_ [ HH.text $ showTracking ttype ] ]
+              Right ttype -> showTracking ttype
           ]
       , HH.div_
           [ HH.button
@@ -79,13 +85,10 @@ ui = H.component { render , eval }
               , HE.onClick (HE.input_ RequestReport)
               ]
               [ HH.text "Get report type" ]
-          , HH.pre_
-            case st.report of
+          , case st.report of
               Left err -> HH.text err
-              Right rtype ->
-                [ HH.code_
-                  [ HH.text $ showReport $ Map.fromFoldable rtype ]
-                ]
+              Right rtype -> showReport rtype
+                -- [ HH.code_ [ showReport $ Map.fromFoldable rtype.unReport ]]
           ]
       ]
 
@@ -94,18 +97,17 @@ ui = H.component { render , eval }
     RequestTracking next -> do
       H.modify (_ { loading = true })
       response <- H.fromAff $ get "/trackingType"
-      let msg = case decodeJson =<< jsonParser response.response of
-            Left err -> err <> ": " <> response.response
-            Right (_ :: Tracking)  -> "Successfully decoded trackingType"
+      let t = decodeJson =<< jsonParser response.response
       H.modify (_ { loading = false
-                  , result = msg
+                  , tracking = t
                   })
       pure next
     RequestReport next -> do
       H.modify (_ { loading = true })
       response <- H.fromAff $ get "/reportType"
+      let r = decodeJson =<< jsonParser response.response
       H.modify (_ { loading = false
-                  , result = response.response
+                  , report = r
                   })
       pure next
 
