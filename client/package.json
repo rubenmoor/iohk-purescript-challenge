@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "build": "pulp browserify --optimise --to site/main.js && cp -r site ../server"
+        "build": "set -x && pulp browserify --optimise --to site/main.js && cp -r site ../server"
     },
     "dependencies": {
         "virtual-dom": "^2.1.1"

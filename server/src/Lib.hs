@@ -26,16 +26,15 @@ import           Sample          (ReOutput, TrOutput, reportExample,
 newtype Tracking = Tracking { unTracking :: [[TrOutput]] }
   deriving (Generic, ToJSON)
 
-newtype Report a b = Report { unReport :: [(a, b)] }
-  deriving (Generic, ToJSON)
-
 -- I decided to bridge a list of pairs instead of an actual map,
 -- because I'm missing the purescript generic instance for Map and
 -- don't know how to go on from there.
+newtype Report a b = Report { unReport :: [(a, b)] }
+  deriving (Generic, ToJSON)
+
 -- This constructor covers up part of the damage.
--- However, now I have to implement something like `fromReport` in
--- PureScript manually to get the actual Map ...
--- or, like I did, just work with the Array
+-- However, now I have to recover the Map in PureScript manually
+-- or, like I did, just work with the Array instead
 mkReport :: Map a b -> Report a b
 mkReport = Report . Map.toList
 
